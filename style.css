@@ -16,10 +16,19 @@ body {
   border-bottom: 1px solid #ddd;
 }
 
+.toolbar .branding {
+  margin-right: auto;
+}
+
 .toolbar h1 {
   font-size: 1.1rem;
   margin: 0;
-  margin-right: auto;
+}
+
+.toolbar .subtitle {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .toolbar-controls button {
