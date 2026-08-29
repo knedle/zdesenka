@@ -9,7 +9,6 @@ const LOGO_MAX_SCALE = 20;
 
 const placeholderEl = document.getElementById('placeholder');
 const messageEl = document.getElementById('message');
-const stageWrapperEl = document.getElementById('stage-wrapper');
 const stageEl = document.getElementById('stage');
 const backgroundEl = document.getElementById('background');
 const logoLayerEl = document.getElementById('logo-layer');
@@ -20,12 +19,6 @@ const zoomOutBtn = document.getElementById('zoom-out');
 const zoomInBtn = document.getElementById('zoom-in');
 const insertLogoBtn = document.getElementById('insert-logo');
 const saveBtn = document.getElementById('save');
-
-console.log('Zděšenka editor: elementy načteny', {
-  placeholderEl, messageEl, stageWrapperEl, stageEl, backgroundEl,
-  logoLayerEl, logoImgEl, logoHandleEl,
-  zoomOutBtn, zoomInBtn, insertLogoBtn, saveBtn,
-});
 
 const state = {
   background: null,
@@ -98,21 +91,30 @@ document.addEventListener('paste', async (event) => {
   }
 
   const file = imageItem.getAsFile();
-  const bitmap = await loadImage(file);
+  if (!file) {
+    showMessage('Ve schránce není obrázek');
+    return;
+  }
 
-  state.background = {
-    bitmap,
-    naturalWidth: bitmap.naturalWidth,
-    naturalHeight: bitmap.naturalHeight,
-    scale: 1,
-    width: bitmap.naturalWidth,
-    height: bitmap.naturalHeight,
-  };
-  state.logo = null;
+  try {
+    const bitmap = await loadImage(file);
 
-  hideMessage();
-  setControlsEnabled(true);
-  render();
+    state.background = {
+      bitmap,
+      naturalWidth: bitmap.naturalWidth,
+      naturalHeight: bitmap.naturalHeight,
+      scale: 1,
+      width: bitmap.naturalWidth,
+      height: bitmap.naturalHeight,
+    };
+    state.logo = null;
+
+    hideMessage();
+    setControlsEnabled(true);
+    render();
+  } catch (error) {
+    showMessage('Ve schránce není obrázek');
+  }
 });
 
 function setBackgroundScale(newScale) {
@@ -123,6 +125,12 @@ function setBackgroundScale(newScale) {
     state.background.naturalHeight,
     state.background.scale
   );
+  if (state.logo) {
+    const ratio = width / state.background.width;
+    state.logo.x *= ratio;
+    state.logo.y *= ratio;
+    state.logo.scale *= ratio;
+  }
   state.background.width = width;
   state.background.height = height;
   render();
@@ -213,6 +221,10 @@ logoHandleEl.addEventListener('pointerdown', (event) => {
 saveBtn.addEventListener('click', async () => {
   if (!state.background) return;
   const blob = await composeImage(state.background, state.logo, logoImgEl);
+  if (!blob) {
+    showMessage('Obrázek je příliš velký na uložení');
+    return;
+  }
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
