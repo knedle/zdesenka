@@ -3,6 +3,8 @@ import { clamp, computeScaledDimensions, displayToLogicalScale, displayDeltaToLo
 const BACKGROUND_ZOOM_STEP = 1.1;
 const BACKGROUND_MIN_SCALE = 0.05;
 const BACKGROUND_MAX_SCALE = 10;
+const LOGO_MIN_SCALE = 0.05;
+const LOGO_MAX_SCALE = 20;
 
 const placeholderEl = document.getElementById('placeholder');
 const messageEl = document.getElementById('message');
@@ -61,6 +63,16 @@ function render() {
 
   if (state.logo) {
     logoLayerEl.hidden = false;
+    const { width: logoWidth, height: logoHeight } = computeScaledDimensions(
+      logoImgEl.naturalWidth,
+      logoImgEl.naturalHeight,
+      state.logo.scale
+    );
+    const left = state.logo.x - logoWidth / 2;
+    const top = state.logo.y - logoHeight / 2;
+    logoLayerEl.style.width = `${logoWidth}px`;
+    logoLayerEl.style.height = `${logoHeight}px`;
+    logoLayerEl.style.transform = `translate(${left}px, ${top}px)`;
   } else {
     logoLayerEl.hidden = true;
   }
@@ -121,4 +133,11 @@ zoomInBtn.addEventListener('click', () => {
 
 zoomOutBtn.addEventListener('click', () => {
   setBackgroundScale(state.background.scale / BACKGROUND_ZOOM_STEP);
+});
+
+insertLogoBtn.addEventListener('click', () => {
+  if (!state.background) return;
+  const center = centerPoint(state.background.width, state.background.height);
+  state.logo = { x: center.x, y: center.y, scale: 1 };
+  render();
 });
