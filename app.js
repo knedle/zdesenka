@@ -141,3 +141,35 @@ insertLogoBtn.addEventListener('click', () => {
   state.logo = { x: center.x, y: center.y, scale: 1 };
   render();
 });
+
+logoLayerEl.addEventListener('pointerdown', (event) => {
+  if (event.target === logoHandleEl) return;
+  event.preventDefault();
+  logoLayerEl.setPointerCapture(event.pointerId);
+
+  const startClientX = event.clientX;
+  const startClientY = event.clientY;
+  const startLogoX = state.logo.x;
+  const startLogoY = state.logo.y;
+  const displayScale = displayToLogicalScale(
+    stageEl.getBoundingClientRect().width,
+    state.background.width
+  );
+
+  function onMove(moveEvent) {
+    const deltaDisplayX = moveEvent.clientX - startClientX;
+    const deltaDisplayY = moveEvent.clientY - startClientY;
+    state.logo.x = startLogoX + displayDeltaToLogicalDelta(deltaDisplayX, displayScale);
+    state.logo.y = startLogoY + displayDeltaToLogicalDelta(deltaDisplayY, displayScale);
+    render();
+  }
+
+  function onUp() {
+    logoLayerEl.releasePointerCapture(event.pointerId);
+    logoLayerEl.removeEventListener('pointermove', onMove);
+    logoLayerEl.removeEventListener('pointerup', onUp);
+  }
+
+  logoLayerEl.addEventListener('pointermove', onMove);
+  logoLayerEl.addEventListener('pointerup', onUp);
+});
