@@ -173,3 +173,38 @@ logoLayerEl.addEventListener('pointerdown', (event) => {
   logoLayerEl.addEventListener('pointermove', onMove);
   logoLayerEl.addEventListener('pointerup', onUp);
 });
+
+function distanceFromLogoCenter(clientX, clientY) {
+  const stageRect = stageEl.getBoundingClientRect();
+  const displayScale = displayToLogicalScale(stageRect.width, state.background.width);
+  const px = displayDeltaToLogicalDelta(clientX - stageRect.left, displayScale);
+  const py = displayDeltaToLogicalDelta(clientY - stageRect.top, displayScale);
+  const dx = px - state.logo.x;
+  const dy = py - state.logo.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+logoHandleEl.addEventListener('pointerdown', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  logoHandleEl.setPointerCapture(event.pointerId);
+
+  const startScale = state.logo.scale;
+  const startDistance = distanceFromLogoCenter(event.clientX, event.clientY);
+
+  function onMove(moveEvent) {
+    const distance = distanceFromLogoCenter(moveEvent.clientX, moveEvent.clientY);
+    const ratio = distance / startDistance;
+    state.logo.scale = clamp(startScale * ratio, LOGO_MIN_SCALE, LOGO_MAX_SCALE);
+    render();
+  }
+
+  function onUp() {
+    logoHandleEl.releasePointerCapture(event.pointerId);
+    logoHandleEl.removeEventListener('pointermove', onMove);
+    logoHandleEl.removeEventListener('pointerup', onUp);
+  }
+
+  logoHandleEl.addEventListener('pointermove', onMove);
+  logoHandleEl.addEventListener('pointerup', onUp);
+});
