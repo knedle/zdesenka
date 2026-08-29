@@ -1,4 +1,5 @@
 import { clamp, computeScaledDimensions, displayToLogicalScale, displayDeltaToLogicalDelta, centerPoint } from './geometry.js';
+import { composeImage } from './export.js';
 
 const BACKGROUND_ZOOM_STEP = 1.1;
 const BACKGROUND_MIN_SCALE = 0.05;
@@ -207,4 +208,15 @@ logoHandleEl.addEventListener('pointerdown', (event) => {
 
   logoHandleEl.addEventListener('pointermove', onMove);
   logoHandleEl.addEventListener('pointerup', onUp);
+});
+
+saveBtn.addEventListener('click', async () => {
+  if (!state.background) return;
+  const blob = await composeImage(state.background, state.logo, logoImgEl);
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'zdesenka.png';
+  link.click();
+  URL.revokeObjectURL(url);
 });
