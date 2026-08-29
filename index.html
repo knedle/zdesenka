@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zděšenka editor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="toolbar">
+    <h1>Zděšenka editor</h1>
+    <div class="toolbar-controls">
+      <button id="zoom-out" type="button" disabled>Zmenšit obrázek</button>
+      <button id="zoom-in" type="button" disabled>Zvětšit obrázek</button>
+      <button id="insert-logo" type="button" disabled>Vložit Zděšenku</button>
+      <button id="save" type="button" disabled>Uložit</button>
+    </div>
+  </header>
+
+  <main id="stage-wrapper">
+    <p id="placeholder">Vlož obrázek (Ctrl+V)</p>
+    <p id="message" hidden></p>
+    <div id="stage">
+      <img id="background" alt="" hidden />
+      <div id="logo-layer" hidden>
+        <img id="logo" src="jsemZdesena.png" alt="Zděšenka" draggable="false" />
+        <div id="logo-handle"></div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

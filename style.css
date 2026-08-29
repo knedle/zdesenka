@@ -1,0 +1,83 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #1a1a1a;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.toolbar h1 {
+  font-size: 1.1rem;
+  margin: 0;
+  margin-right: auto;
+}
+
+.toolbar-controls button {
+  margin-left: 0.5rem;
+}
+
+#stage-wrapper {
+  position: relative;
+  margin: 1rem;
+  padding: 1rem;
+  overflow: auto;
+  max-height: 80vh;
+  border: 1px dashed #bbb;
+}
+
+#placeholder {
+  color: #888;
+  text-align: center;
+}
+
+#message {
+  color: #b00020;
+  font-weight: 600;
+}
+
+#stage {
+  position: relative;
+  display: inline-block;
+}
+
+#background {
+  display: block;
+}
+
+#logo-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: move;
+  touch-action: none;
+}
+
+#logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#logo-handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  right: -7px;
+  bottom: -7px;
+  background: #0066ff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  cursor: nwse-resize;
+  touch-action: none;
+}
