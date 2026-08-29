@@ -1,3 +1,9 @@
+import { clamp, computeScaledDimensions, displayToLogicalScale, displayDeltaToLogicalDelta, centerPoint } from './geometry.js';
+
+const BACKGROUND_ZOOM_STEP = 1.1;
+const BACKGROUND_MIN_SCALE = 0.05;
+const BACKGROUND_MAX_SCALE = 10;
+
 const placeholderEl = document.getElementById('placeholder');
 const messageEl = document.getElementById('message');
 const stageWrapperEl = document.getElementById('stage-wrapper');
@@ -94,4 +100,25 @@ document.addEventListener('paste', async (event) => {
   hideMessage();
   setControlsEnabled(true);
   render();
+});
+
+function setBackgroundScale(newScale) {
+  if (!state.background) return;
+  state.background.scale = clamp(newScale, BACKGROUND_MIN_SCALE, BACKGROUND_MAX_SCALE);
+  const { width, height } = computeScaledDimensions(
+    state.background.naturalWidth,
+    state.background.naturalHeight,
+    state.background.scale
+  );
+  state.background.width = width;
+  state.background.height = height;
+  render();
+}
+
+zoomInBtn.addEventListener('click', () => {
+  setBackgroundScale(state.background.scale * BACKGROUND_ZOOM_STEP);
+});
+
+zoomOutBtn.addEventListener('click', () => {
+  setBackgroundScale(state.background.scale / BACKGROUND_ZOOM_STEP);
 });
