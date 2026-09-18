@@ -9,6 +9,7 @@ const LOGO_MAX_SCALE = 20;
 
 const placeholderEl = document.getElementById('placeholder');
 const messageEl = document.getElementById('message');
+const stageWrapperEl = document.getElementById('stage-wrapper');
 const stageEl = document.getElementById('stage');
 const backgroundEl = document.getElementById('background');
 const logoLayerEl = document.getElementById('logo-layer');
@@ -81,21 +82,7 @@ function loadImage(file) {
   });
 }
 
-document.addEventListener('paste', async (event) => {
-  const items = event.clipboardData ? Array.from(event.clipboardData.items) : [];
-  const imageItem = items.find((item) => item.type.startsWith('image/'));
-
-  if (!imageItem) {
-    showMessage('Ve schránce není obrázek');
-    return;
-  }
-
-  const file = imageItem.getAsFile();
-  if (!file) {
-    showMessage('Ve schránce není obrázek');
-    return;
-  }
-
+async function setBackgroundFromFile(file) {
   try {
     const bitmap = await loadImage(file);
 
@@ -113,8 +100,50 @@ document.addEventListener('paste', async (event) => {
     setControlsEnabled(true);
     render();
   } catch (error) {
-    showMessage('Ve schránce není obrázek');
+    showMessage('Nepodařilo se načíst obrázek');
   }
+}
+
+document.addEventListener('paste', (event) => {
+  const items = event.clipboardData ? Array.from(event.clipboardData.items) : [];
+  const imageItem = items.find((item) => item.type.startsWith('image/'));
+
+  if (!imageItem) {
+    showMessage('Ve schránce není obrázek');
+    return;
+  }
+
+  const file = imageItem.getAsFile();
+  if (!file) {
+    showMessage('Ve schránce není obrázek');
+    return;
+  }
+
+  setBackgroundFromFile(file);
+});
+
+stageWrapperEl.addEventListener('dragover', (event) => {
+  event.preventDefault();
+  stageWrapperEl.classList.add('drag-over');
+});
+
+stageWrapperEl.addEventListener('dragleave', () => {
+  stageWrapperEl.classList.remove('drag-over');
+});
+
+stageWrapperEl.addEventListener('drop', (event) => {
+  event.preventDefault();
+  stageWrapperEl.classList.remove('drag-over');
+
+  const files = event.dataTransfer ? Array.from(event.dataTransfer.files) : [];
+  const file = files.find((item) => item.type.startsWith('image/'));
+
+  if (!file) {
+    showMessage('Přetažený soubor není obrázek');
+    return;
+  }
+
+  setBackgroundFromFile(file);
 });
 
 function setBackgroundScale(newScale) {

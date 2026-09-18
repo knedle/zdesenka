@@ -44,6 +44,11 @@ body {
   border: 1px dashed #bbb;
 }
 
+#stage-wrapper.drag-over {
+  border-color: #0066ff;
+  background: #eef4ff;
+}
+
 #placeholder {
   color: #888;
   text-align: center;
